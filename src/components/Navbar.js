@@ -1,56 +1,55 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 
-const Navbar = () => {
+export default function Navbar() {
+  // Menünün açık/kapalı durumunu yönetmek için state
   const [isOpen, setIsOpen] = useState(false);
 
+  // Menü açma/kapama işlevi
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <nav className="bg-blue-600 text-white flex flex-wrap items-center justify-between px-4 py-3">
-      <div className="text-lg font-bold">BM GAYRİMENKUL</div>
+    <nav className="bg-blue-600 text-white p-4">
+      <div className="flex justify-between items-center">
+        {/* Logo/Başlık */}
+        <Link to="/" className="font-bold text-lg">BM GAYRIMENKUL</Link>
 
-      {/* Hamburger menü butonu (mobilde görünür) */}
-      <button
-        className="block md:hidden"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Menüyü aç/kapat"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+        {/* Mobil Menü Düğmesi (Hamburger) - Sadece küçük ekranlarda görünür */}
+        <button
+          className="md:hidden text-white focus:outline-none"
+          onClick={toggleMenu}
+          aria-label="Menü Aç/Kapat"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
-      </button>
+          {/* Basit bir hamburger menü ikonu için SVG veya metin kullanılabilir */}
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}></path>
+          </svg>
+        </button>
 
-      {/* Menü öğeleri */}
-      <div
-        className={`${
-          isOpen ? "block" : "hidden"
-        } w-full md:w-auto md:flex space-y-2 md:space-y-0 md:space-x-4 mt-4 md:mt-0`}
-      >
-        <a href="/" className="block hover:underline">
-          Ana Sayfa
-        </a>
-        <a href="/satilik" className="block hover:underline">
-          Satılık
-        </a>
-        <a href="/kiralik" className="block hover:underline">
-          Kiralık
-        </a>
-        <a href="/hakkimizda" className="block hover:underline">
-          Hakkımızda
-        </a>
+        {/* Masaüstü Menüsü - Orta ve büyük ekranlarda her zaman görünür */}
+        <div className="hidden md:flex gap-4">
+          <Link to="/">Ana Sayfa</Link>
+          <Link to="/satilik">Satılık</Link>
+          <Link to="/kiralik">Kiralık</Link>
+          <Link to="/hakkimizda">Hakkımızda</Link>
+          <Link to="/iletisim">İletişim</Link>
+        </div>
+      </div>
+
+      {/* Mobil Açılır Menü - Sadece küçük ekranlarda ve 'isOpen' true olduğunda görünür */}
+      
+<div className={`md:hidden ${isOpen ? 'block' : 'hidden'} mt-4`}>
+        <div className="flex flex-col space-y-2">
+          {/* Tıklandığında menüyü kapatmak için onClick eklendi */}
+          <Link to="/" className="block py-2" onClick={toggleMenu}>Ana Sayfa</Link>
+          <Link to="/satilik" className="block py-2" onClick={toggleMenu}>Satılık</Link>
+          <Link to="/kiralik" className="block py-2" onClick={toggleMenu}>Kiralık</Link>
+          <Link to="/hakkimizda" className="block py-2" onClick={toggleMenu}>Hakkımızda</Link>
+          <Link to="/iletisim" className="block py-2" onClick={toggleMenu}>İletişim</Link>
+        </div>
       </div>
     </nav>
   );
-};
-
-export default Navbar;
-
+}
