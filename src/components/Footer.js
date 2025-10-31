@@ -20,10 +20,10 @@ const Footer = () => {
               {companyInfo.tagline}
             </p>
             <div className="flex space-x-3">
-              <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300">
+              <a href="https://www.facebook.com/share/1AHDbK35YH/?mibextid=wwXIfr" className="bg-gray-800 p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300">
+              <a href="https://www.instagram.com/berkkmutlu?igsh=dHl2bzJiYTY3amhw" className="bg-gray-800 p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300">
                 <Instagram className="h-5 w-5" />
               </a>
               <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-blue-600 transition-colors duration-300">

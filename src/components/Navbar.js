@@ -2,31 +2,26 @@ import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
+  // 1. Menünün açık/kapalı durumunu yönetmek için state
   const [isOpen, setIsOpen] = useState(false);
 
+  // 2. Menü açma/kapama işlevi
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
   return (
-    // 1. NAV ETİKETİ: 'z-50' yapıldı (yüksek bir katman), 'fixed top-0 w-full' eklenerek
-    // menü sabitleştirildi. Bu, tıklama sorunlarını azaltmaya yardımcı olabilir.
-    <nav className="bg-blue-600 text-white p-4 fixed top-0 w-full z-50"> 
+    // 3. EN DIŞTAKİ NAV ETİKETİ:
+    // 'relative z-10' eklenerek menünün her zaman en üstte kalması sağlandı.
+    <nav className="bg-blue-600 text-white p-4 relative z-10">
       
-      {/* 2. LOGO VE HAMBURGER KISMI: justify-between kullanılırken, logo için mx-auto'dan
-           önce bir kapsayıcı div'e ihtiyaç vardır. Ancak bu tasarımda en kolayı, logo 
-           div'ini esnek (flex) bir kapsayıcı içinde ortalamaktır. */}
       <div className="flex justify-between items-center">
-        
-        {/* Logo/Başlık - flex-grow 1 ve text-center ile ortalanmaya çalışıldı. */}
-        <div className="flex-1 text-center md:text-left">
-            <Link to="/" className="font-bold text-lg">BM GAYRIMENKUL</Link>
-        </div>
+        {/* Logo/Başlık */}
+        <Link to="/" className="font-bold text-lg">BM GAYRIMENKUL</Link>
 
-        {/* Mobil Menü Düğmesi (Hamburger) */}
-        {/* md:hidden ve absolute sağa sabitlendi */}
+        {/* 4. Mobil Menü Düğmesi (Hamburger) - Sadece küçük ekranlarda görünür */}
         <button
-          className="md:hidden text-white focus:outline-none absolute right-4 top-4"
+          className="md:hidden text-white focus:outline-none"
           onClick={toggleMenu}
           aria-label="Menü Aç/Kapat"
         >
@@ -36,7 +31,7 @@ export default function Navbar() {
           </svg>
         </button>
 
-        {/* Masaüstü Menüsü */}
+        {/* 5. Masaüstü Menüsü - Orta ve büyük ekranlarda her zaman görünür */}
         <div className="hidden md:flex gap-4">
           <Link to="/">Ana Sayfa</Link>
           <Link to="/satilik">Satılık</Link>
@@ -46,9 +41,9 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobil Açılır Menü */}
-      {/* w-full ve 'bg-blue-600' eklenerek menünün tam genişlikte arka planı kaplaması sağlandı. */}
-      <div className={`md:hidden ${isOpen ? 'block' : 'hidden'} mt-4 bg-blue-600`}>
+      {/* 6. Mobil Açılır Menü - Sadece küçük ekranlarda ve 'isOpen' true olduğunda görünür */}
+      {/* Şablon dizesi (backtick) kullanılarak dinamik görünürlük sağlandı */}
+      <div className={`md:hidden ${isOpen ? 'block' : 'hidden'} mt-4`}>
         <div className="flex flex-col space-y-2">
           {/* Tıklandığında menüyü kapatmak için onClick eklendi */}
           <Link to="/" className="block py-2" onClick={toggleMenu}>Ana Sayfa</Link>
@@ -59,7 +54,5 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
-    
-    
   );
 }
