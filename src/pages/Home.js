@@ -74,7 +74,7 @@ const Home = () => {
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-in">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-in text-center leading-tight px-4">
             {companyInfo.name}
           </h1>
           <p className="text-lg md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto">
