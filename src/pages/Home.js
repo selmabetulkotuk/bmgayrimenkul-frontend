@@ -2,7 +2,7 @@ import React from "react";
 
 const Home = () => {
   return (
-    <div className="pt-32 flex flex-col items-center justify-center bg-gradient-to-b from-blue-700 to-blue-500 min-h-screen text-white px-4 text-center">
+    <div className="pt-28 flex flex-col items-center justify-center bg-gradient-to-b from-blue-700 to-blue-500 min-h-screen text-white px-4 text-center">
       <h1 className="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">
         Berk Mutlu<br className="md:hidden" /> Gayrimenkul
       </h1>
