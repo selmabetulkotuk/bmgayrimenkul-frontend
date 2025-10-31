@@ -1,1 +1,5 @@
+# Tüm HTTP isteklerini HTTPS'e yönlendir
+http://*    https://:splat    301!
+
+# React Router yönlendirmesi
 /*    /index.html   200
