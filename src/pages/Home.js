@@ -21,15 +21,35 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import PropertyCard from "../components/PropertyCard";
-import { mockProperties, companyInfo } from "../mock/mockData";
 
 const Home = () => {
   const [searchType, setSearchType] = useState("sale");
   const [searchPropertyType, setSearchPropertyType] = useState("all");
   const [featuredProperties, setFeaturedProperties] = useState([]);
+  const [companyInfo, setCompanyInfo] = useState({
+    name: "",
+    description: "",
+    phone: "",
+  });
 
   useEffect(() => {
-    setFeaturedProperties(mockProperties.slice(0, 3));
+    // Backend'den verileri çek
+    const fetchData = async () => {
+      try {
+        // Şirket bilgileri
+        const companyRes = await fetch("http://localhost:5000/api/company-info");
+        const companyData = await companyRes.json();
+        setCompanyInfo(companyData);
+
+        // Öne çıkan ilanlar
+        const propertyRes = await fetch("http://localhost:5000/api/properties/featured");
+        const propertyData = await propertyRes.json();
+        setFeaturedProperties(propertyData);
+      } catch (error) {
+        console.error("Veriler yüklenirken hata oluştu:", error);
+      }
+    };
+    fetchData();
   }, []);
 
   const features = [
@@ -75,10 +95,11 @@ const Home = () => {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-in text-center leading-tight px-4">
-            {companyInfo.name}
+            {companyInfo.name || "Berk Mutlu Gayrimenkul"}
           </h1>
           <p className="text-lg md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto">
-            {companyInfo.description}
+            {companyInfo.description ||
+              "Berk Mutlu Gayrimenkul, güven ve dürüstlük ilkesiyle hareket eden, her müşterisinin ihtiyaçlarına özel çözümler sunmayı hedefleyen bir gayrimenkul danışmanlık firmasıdır.Bizim için her müşteri, bir iş değil; uzun soluklu bir dostluğun başlangıcıdır. Gayrimenkulde mutlu bir başlangıç için doğru adrestesiniz.Soyadımız mutluluk,işimiz güven."}
           </p>
 
           {/* Search Box */}
@@ -112,9 +133,7 @@ const Home = () => {
 
               <Input placeholder="Konum ara..." className="h-12" />
 
-              <Link
-                to={`/${searchType === "sale" ? "satilik" : "kiralik"}`}
-              >
+              <Link to={`/${searchType === "sale" ? "satilik" : "kiralik"}`}>
                 <Button className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg">
                   <Search className="h-5 w-5 mr-2" />
                   Ara
@@ -162,9 +181,15 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {featuredProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
+            {featuredProperties.length > 0 ? (
+              featuredProperties.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))
+            ) : (
+              <p className="text-center text-gray-500 col-span-3">
+                Henüz eklenmiş ilan bulunmamaktadır.
+              </p>
+            )}
           </div>
 
           <div className="text-center">
