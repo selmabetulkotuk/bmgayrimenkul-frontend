@@ -6,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import PropertyCard from '../components/PropertyCard';
-import { mockProperties } from '../mock/mockData';
 
 const PropertyList = () => {
   const { type } = useParams();
@@ -23,13 +22,22 @@ const PropertyList = () => {
     location: ''
   });
 
+  // ✅ Backend'den veri çekme
   useEffect(() => {
-    // Filter by sale or rent
-    const filtered = mockProperties.filter(
-      (prop) => prop.type === (type === 'satilik' ? 'sale' : 'rent')
-    );
-    setProperties(filtered);
-    setFilteredProperties(filtered);
+    const fetchProperties = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/properties?type=${type === 'satilik' ? 'sale' : 'rent'}`
+        );
+        const data = await response.json();
+        setProperties(data);
+        setFilteredProperties(data);
+      } catch (error) {
+        console.error("Veriler alınırken hata:", error);
+      }
+    };
+
+    fetchProperties();
   }, [type]);
 
   useEffect(() => {
@@ -65,7 +73,7 @@ const PropertyList = () => {
 
     if (filters.location) {
       filtered = filtered.filter(p =>
-        p.location.toLowerCase().includes(filters.location.toLowerCase())
+        p.location?.toLowerCase().includes(filters.location.toLowerCase())
       );
     }
 
@@ -232,7 +240,7 @@ const PropertyList = () => {
             {filteredProperties.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProperties.map((property) => (
-                  <PropertyCard key={property.id} property={property} />
+                  <PropertyCard key={property._id} property={property} />
                 ))}
               </div>
             ) : (

@@ -7,6 +7,8 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent } from '../components/ui/card';
 import { toast } from '../hooks/use-toast';
 import { companyInfo } from '../mock/mockData';
+ import { sendContactForm } from '../api'; // en üstte import ekle
+
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -17,15 +19,25 @@ const Contact = () => {
     message: ''
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // This will be connected to backend later
+ 
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await sendContactForm(formData);
     toast({
       title: 'Mesajınız Gönderildi!',
-      description: 'En kısa sürede sizinle iletişime geçeceğiz.'
+      description: res.message || 'En kısa sürede sizinle iletişime geçeceğiz.'
     });
     setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-  };
+  } catch (err) {
+    toast({
+      title: 'Hata!',
+      description: 'Mesaj gönderilirken bir sorun oluştu.',
+      variant: 'destructive'
+    });
+  }
+};
+
 
   const contactInfo = [
     {
