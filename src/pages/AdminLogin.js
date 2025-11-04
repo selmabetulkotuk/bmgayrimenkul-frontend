@@ -101,9 +101,9 @@ const AdminLogin = () => {
           </form>
 
           <div className="mt-6 text-center text-sm text-gray-600">
-            <p>Test için kullanabilirsiniz:</p>
+            <p>Lütfen şifrenizi giriniz.:</p>
             <p className="mt-1 text-xs text-gray-500">
-              Admin şifresi backend kurulumunda ayarlanacaktır
+             
             </p>
           </div>
         </CardContent>
