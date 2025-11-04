@@ -13,7 +13,7 @@ import Contact from "./pages/Contact";
 import AdminLogin from "./pages/AdminLogin";
 
 // 🆕 Admin sayfaları
-import Dashboard from "./pages/admin/Dashboard";
+import Dashboard from "./pages/admin/AdminDashboard";
 import ManageProperties from "./pages/admin/ManageProperties";
 
 function App() {
