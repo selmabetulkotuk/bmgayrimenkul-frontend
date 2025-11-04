@@ -37,12 +37,12 @@ const Home = () => {
     const fetchData = async () => {
       try {
         // Şirket bilgileri
-        const companyRes = await fetch("http://localhost:5000/api/company-info");
+        const companyRes = await fetch("https://bmgayrimenkul-backend.onrender.com/api/company-info");
         const companyData = await companyRes.json();
         setCompanyInfo(companyData);
 
         // Öne çıkan ilanlar
-        const propertyRes = await fetch("http://localhost:5000/api/properties/featured");
+        const propertyRes = await fetch("https://bmgayrimenkul-backend.onrender.com/api/properties/featured");
         const propertyData = await propertyRes.json();
         setFeaturedProperties(propertyData);
       } catch (error) {
