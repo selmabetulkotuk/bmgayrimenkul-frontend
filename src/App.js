@@ -12,6 +12,10 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import AdminLogin from "./pages/AdminLogin";
 
+// 🆕 Admin sayfaları
+import Dashboard from "./pages/admin/Dashboard";
+import ManageProperties from "./pages/admin/ManageProperties";
+
 function App() {
   return (
     <AuthProvider>
@@ -20,13 +24,18 @@ function App() {
           <Navbar />
           <main className="flex-grow">
             <Routes>
+              {/* 🌐 Ziyaretçi sayfaları */}
               <Route path="/" element={<Home />} />
               <Route path="/satilik" element={<PropertyList />} />
               <Route path="/kiralik" element={<PropertyList />} />
               <Route path="/ilan/:id" element={<PropertyDetail />} />
               <Route path="/hakkimizda" element={<About />} />
               <Route path="/iletisim" element={<Contact />} />
+
+              {/* 🔐 Admin sayfaları */}
               <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<Dashboard />} />
+              <Route path="/admin/properties" element={<ManageProperties />} />
             </Routes>
           </main>
           <Footer />
