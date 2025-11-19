@@ -11,6 +11,8 @@ import PropertyDetail from "./pages/PropertyDetail";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import AdminLogin from "./pages/AdminLogin";
+import AddProperty from "./pages/admin/AddProperty";
+
 
 // 🆕 Admin sayfaları
 import Dashboard from "./pages/admin/AdminDashboard";
@@ -36,6 +38,8 @@ function App() {
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<Dashboard />} />
               <Route path="/admin/properties" element={<ManageProperties />} />
+              <Route path="/admin/add-property" element={<AddProperty />} />
+
             </Routes>
           </main>
           <Footer />
