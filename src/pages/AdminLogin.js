@@ -1,43 +1,49 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, User, LogIn } from 'lucide-react';
+import { Lock, User } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { useAuth } from '../context/AuthContext';
 import { toast } from '../hooks/use-toast';
+import axios from 'axios';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
-  const [formData, setFormData] = useState({
-    username: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
+
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const result = await login(formData.username, formData.password);
+    try {
+      const res = await axios.post(`${backendUrl}/admin/login`, formData);
 
-    if (result.success) {
+      if (res.data && res.data.token) {
+        // 🔥 Token’ı güvenli şekilde localStorage’a kaydediyoruz
+        localStorage.setItem('token', res.data.token);
 
-      // 🔥 Token’ı burada kaydediyoruz
-      localStorage.setItem("token", result.token);
+        toast({
+          title: 'Giriş Başarılı!',
+          description: 'Admin paneline yönlendiriliyorsunuz...'
+        });
 
-      toast({
-        title: 'Giriş Başarılı!',
-        description: 'Admin paneline yönlendiriliyorsunuz...'
-      });
-
-      navigate('/admin/dashboard');
-    } else {
+        navigate('/admin/dashboard');
+      } else {
+        toast({
+          title: 'Giriş Başarısız',
+          description: res.data.message || 'Kullanıcı adı veya şifre hatalı',
+          variant: 'destructive'
+        });
+      }
+    } catch (err) {
+      console.error(err.response?.data || err.message);
       toast({
         title: 'Giriş Başarısız',
-        description: result.error || 'Kullanıcı adı veya şifre hatalı',
+        description: err.response?.data?.message || 'Kullanıcı adı veya şifre hatalı',
         variant: 'destructive'
       });
     }
@@ -66,7 +72,7 @@ const AdminLogin = () => {
                   id="username"
                   type="text"
                   value={formData.username}
-                  onChange={(e) => setFormData({...formData, username: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   className="pl-10"
                   required
                 />
@@ -81,7 +87,7 @@ const AdminLogin = () => {
                   id="password"
                   type="password"
                   value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="pl-10"
                   required
                 />
@@ -93,7 +99,7 @@ const AdminLogin = () => {
               className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg"
               disabled={loading}
             >
-              {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
+              {loading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
             </Button>
           </form>
         </CardContent>

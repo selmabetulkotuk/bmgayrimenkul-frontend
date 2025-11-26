@@ -25,7 +25,7 @@ function AddProperty() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token"); // Token key’i Login ile uyumlu olmalı
+    const token = localStorage.getItem("token"); // Login ile kaydedilen token
 
     if (!token) {
       alert("Yetkiniz yok. Lütfen giriş yapın.");
@@ -45,10 +45,10 @@ function AddProperty() {
     images.forEach((img) => formData.append("images", img));
 
     try {
-      const res = await axios.post(`${backendUrl}/api/properties`, formData, {
+      const res = await axios.post(`${backendUrl}/properties/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // token doğru gönderiliyor
         },
       });
 
@@ -67,8 +67,12 @@ function AddProperty() {
       setImages([]);
       setPreviewImages([]);
     } catch (err) {
-      console.error(err);
-      alert("İlan eklenirken hata oluştu!");
+      console.error(err.response?.data || err.message); // Hata detayını logla
+      alert(
+        err.response?.data?.message ||
+        err.response?.data?.detail ||
+        "İlan eklenirken hata oluştu!"
+      );
     }
   };
 
