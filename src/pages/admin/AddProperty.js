@@ -35,7 +35,7 @@ const AddProperty = () => {
 
     try {
       // 1️⃣ İlan oluştur
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/properties`, {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/properties`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const AddProperty = () => {
         const formData = new FormData();
         form.images.forEach((file) => formData.append("files", file));
 
-        await fetch(`${process.env.REACT_APP_API_URL}/api/properties/${propertyId}/images`, {
+        await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/properties/${propertyId}/images`, {
           method: "POST",
           body: formData,
         });
@@ -180,7 +180,7 @@ const AddProperty = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
+      </div>
   );
 };
 
