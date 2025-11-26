@@ -13,24 +13,21 @@ const AdminLogin = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
 
-  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  const backendUrl = process.env.REACT_APP_BACKEND_URL; // örn: https://bmgayrimenkul-backend.onrender.com
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const res = await axios.post(`${backendUrl}/admin/login`, formData);
+      const res = await axios.post(`${backendUrl}/admin/login`, formData); // Login endpoint doğru olmalı
 
       if (res.data && res.data.token) {
-        // 🔥 Token’ı güvenli şekilde localStorage’a kaydediyoruz
-        localStorage.setItem('token', res.data.token);
-
+        localStorage.setItem('token', res.data.token); // Token kaydedildi
         toast({
           title: 'Giriş Başarılı!',
           description: 'Admin paneline yönlendiriliyorsunuz...'
         });
-
         navigate('/admin/dashboard');
       } else {
         toast({
