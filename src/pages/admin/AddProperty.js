@@ -45,7 +45,7 @@ function AddProperty() {
     images.forEach((img) => formData.append("images", img));
 
     try {
-      const res = await axios.post(`${backendUrl}/properties/`, formData, {
+      const res = await axios.post(`${backendUrl}/api/properties/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`, // token doğru gönderiliyor
