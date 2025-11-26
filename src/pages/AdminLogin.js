@@ -24,10 +24,15 @@ const AdminLogin = () => {
     const result = await login(formData.username, formData.password);
 
     if (result.success) {
+
+      // 🔥 Token’ı burada kaydediyoruz
+      localStorage.setItem("token", result.token);
+
       toast({
         title: 'Giriş Başarılı!',
         description: 'Admin paneline yönlendiriliyorsunuz...'
       });
+
       navigate('/admin/dashboard');
     } else {
       toast({
@@ -50,6 +55,7 @@ const AdminLogin = () => {
           <CardTitle className="text-3xl font-bold">Admin Girişi</CardTitle>
           <p className="text-gray-600">Berk Mutlu Emlak Yönetim Paneli</p>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
@@ -59,9 +65,8 @@ const AdminLogin = () => {
                 <Input
                   id="username"
                   type="text"
-                  placeholder="Kullanıcı adınızı girin"
                   value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  onChange={(e) => setFormData({...formData, username: e.target.value})}
                   className="pl-10"
                   required
                 />
@@ -75,9 +80,8 @@ const AdminLogin = () => {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Şifrenizi girin"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
                   className="pl-10"
                   required
                 />
@@ -89,23 +93,9 @@ const AdminLogin = () => {
               className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg"
               disabled={loading}
             >
-              {loading ? (
-                <span>Giriş yapılıyor...</span>
-              ) : (
-                <>
-                  <LogIn className="h-5 w-5 mr-2" />
-                  Giriş Yap
-                </>
-              )}
+              {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
             </Button>
           </form>
-
-          <div className="mt-6 text-center text-sm text-gray-600">
-            <p>Lütfen şifrenizi giriniz.:</p>
-            <p className="mt-1 text-xs text-gray-500">
-             
-            </p>
-          </div>
         </CardContent>
       </Card>
     </div>

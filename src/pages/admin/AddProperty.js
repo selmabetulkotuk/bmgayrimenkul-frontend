@@ -1,187 +1,145 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Card, CardHeader, CardContent, CardTitle } from "../../components/ui/card";
-import { toast } from "../../hooks/use-toast";
+import axios from "axios";
 
-const AddProperty = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    title: "",
-    price: "",
-    area: "",
-    rooms: "",
-    location: "",
-    type: "satılık",
-    property_type: "daire",
-    description: "",
-    images: [],
-  });
+function AddProperty() {
+  const [title, setTitle] = useState("");
+  const [price, setPrice] = useState("");
+  const [area, setArea] = useState("");
+  const [rooms, setRooms] = useState("");
+  const [location, setLocation] = useState("");
+  const [status, setStatus] = useState("Satılık");
+  const [type, setType] = useState("Daire");
+  const [description, setDescription] = useState("");
+  const [images, setImages] = useState([]);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
   const handleImageChange = (e) => {
-    setForm({ ...form, images: Array.from(e.target.files) });
+    setImages(e.target.files);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+
+    const token = localStorage.getItem("adminToken"); // <-- Admin giriş token'ı
+
+    if (!token) {
+      alert("Yetkiniz yok. Lütfen yeniden giriş yapın.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("price", price);
+    formData.append("area", area);
+    formData.append("rooms", rooms);
+    formData.append("location", location);
+    formData.append("status", status);
+    formData.append("type", type);
+    formData.append("description", description);
+
+    for (let i = 0; i < images.length; i++) {
+      formData.append("images", images[i]);
+    }
 
     try {
-      // 1️⃣ İlan oluştur
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/properties`, {
-        method: "POST",
+      const res = await axios.post(`${backendUrl}/api/properties`, formData, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          title: form.title,
-          price: parseFloat(form.price),
-          area: parseFloat(form.area),
-          rooms: parseInt(form.rooms),
-          location: form.location,
-          type: form.type,
-          property_type: form.property_type,
-          description: form.description,
-          status: "active",
-          created_at: new Date().toISOString(),
-        }),
       });
 
-      if (!res.ok) throw new Error("İlan eklenemedi");
-      const data = await res.json();
-      const propertyId = data.property.id;
+      alert("İlan başarıyla kaydedildi!");
+      console.log(res.data);
 
-      // 2️⃣ Görselleri yükle
-      if (form.images.length > 0) {
-        const formData = new FormData();
-        form.images.forEach((file) => formData.append("files", file));
+      // Formu temizle
+      setTitle("");
+      setPrice("");
+      setArea("");
+      setRooms("");
+      setLocation("");
+      setStatus("Satılık");
+      setType("Daire");
+      setDescription("");
+      setImages([]);
 
-        await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/properties/${propertyId}/images`, {
-          method: "POST",
-          body: formData,
-        });
-      }
-
-      toast({
-        title: "Başarılı!",
-        description: "Yeni ilan başarıyla eklendi 🎉",
-      });
-      navigate("/admin/dashboard");
     } catch (err) {
-      toast({
-        title: "Hata!",
-        description: err.message || "İlan eklenirken bir hata oluştu.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+      console.error(err);
+      alert("İlan eklenirken hata oluştu!");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-6">
-      <div className="max-w-3xl mx-auto">
-        <Card className="shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-blue-700 text-center">
-              🏡 Yeni İlan Ekle
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <Label>Başlık</Label>
-                <Input name="title" value={form.title} onChange={handleChange} required />
-              </div>
+    <div className="add-property-container">
+      <h2>Yeni İlan Ekle</h2>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Fiyat (₺)</Label>
-                  <Input name="price" type="number" value={form.price} onChange={handleChange} required />
-                </div>
-                <div>
-                  <Label>Alan (m²)</Label>
-                  <Input name="area" type="number" value={form.area} onChange={handleChange} required />
-                </div>
-              </div>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Başlık"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Oda Sayısı</Label>
-                  <Input name="rooms" type="number" value={form.rooms} onChange={handleChange} required />
-                </div>
-                <div>
-                  <Label>Lokasyon</Label>
-                  <Input name="location" value={form.location} onChange={handleChange} required />
-                </div>
-              </div>
+        <input
+          type="number"
+          placeholder="Fiyat"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          required
+        />
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Durum</Label>
-                  <select
-                    name="type"
-                    value={form.type}
-                    onChange={handleChange}
-                    className="w-full border rounded-md p-2"
-                  >
-                    <option value="satılık">Satılık</option>
-                    <option value="kiralık">Kiralık</option>
-                  </select>
-                </div>
-                <div>
-                  <Label>Tür</Label>
-                  <select
-                    name="property_type"
-                    value={form.property_type}
-                    onChange={handleChange}
-                    className="w-full border rounded-md p-2"
-                  >
-                    <option value="daire">Daire</option>
-                    <option value="villa">Villa</option>
-                    <option value="arsa">Arsa</option>
-                    <option value="ofis">Ofis</option>
-                  </select>
-                </div>
-              </div>
+        <input
+          type="number"
+          placeholder="Alan (m²)"
+          value={area}
+          onChange={(e) => setArea(e.target.value)}
+          required
+        />
 
-              <div>
-                <Label>Açıklama</Label>
-                <textarea
-                  name="description"
-                  value={form.description}
-                  onChange={handleChange}
-                  rows="4"
-                  className="w-full border rounded-md p-2"
-                  required
-                />
-              </div>
+        <input
+          type="number"
+          placeholder="Oda Sayısı"
+          value={rooms}
+          onChange={(e) => setRooms(e.target.value)}
+          required
+        />
 
-              <div>
-                <Label>Fotoğraflar</Label>
-                <Input type="file" multiple onChange={handleImageChange} />
-              </div>
+        <input
+          type="text"
+          placeholder="Lokasyon"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          required
+        />
 
-              <Button
-                type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg"
-                disabled={loading}
-              >
-                {loading ? "Kaydediliyor..." : "İlanı Kaydet"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-      </div>
+        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="Satılık">Satılık</option>
+          <option value="Kiralık">Kiralık</option>
+        </select>
+
+        <select value={type} onChange={(e) => setType(e.target.value)}>
+          <option value="Daire">Daire</option>
+          <option value="Villa">Villa</option>
+          <option value="Arsa">Arsa</option>
+          <option value="Ofis">Ofis</option>
+          <option value="Dükkan">Dükkan</option>
+        </select>
+
+        <textarea
+          placeholder="Açıklama"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+
+        <input type="file" multiple onChange={handleImageChange} />
+
+        <button type="submit">İlan Kaydet</button>
+      </form>
+    </div>
   );
-};
+}
 
 export default AddProperty;
