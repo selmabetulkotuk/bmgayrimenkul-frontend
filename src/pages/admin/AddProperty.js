@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 
 export default function AddProperty() {
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -43,25 +43,12 @@ export default function AddProperty() {
       return;
     }
 
-    if (!token) {
-      alert("Admin giriş yapmamış!");
-      return;
-    }
-
     const data = new FormData();
-
-    // 🔥 Tüm input alanlarını FormData içine eksiksiz ekliyoruz
-    Object.keys(formDataObj).forEach((key) => {
-      data.append(key, formDataObj[key]);
-    });
-
-    // 🔥 Birden fazla fotoğraf varsa hepsini ekliyoruz
-    for (let i = 0; i < images.length; i++) {
-      data.append("images", images[i]);
-    }
+    Object.keys(formDataObj).forEach((key) => data.append(key, formDataObj[key]));
+    for (let i = 0; i < images.length; i++) data.append("images", images[i]);
 
     try {
-      await axios.post(`${backendUrl}/properties/add`, data, {
+      await axios.post(`${backendUrl}/api/properties`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${token}`,
@@ -77,7 +64,6 @@ export default function AddProperty() {
 
   return (
     <form onSubmit={handleSubmit} className="p-6 space-y-4">
-
       <div>
         <Label>İlan Başlığı</Label>
         <Input name="title" value={formDataObj.title} onChange={handleChange} required />
