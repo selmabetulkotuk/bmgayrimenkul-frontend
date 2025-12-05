@@ -6,7 +6,10 @@ import { Label } from '../../components/ui/label';
 
 export default function AddProperty() {
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
-  const token = localStorage.getItem("adminToken");
+  const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET;
+
+  const token = localStorage.getItem("adminToken"); // <-- ARTIK TANIMLI!
 
   const [formDataObj, setFormDataObj] = useState({
     title: "",
@@ -35,16 +38,19 @@ export default function AddProperty() {
     setImages(e.target.files);
   };
 
+  // -----------------------------
+  //    Cloudinary'ye RESİM YÜKLEME
+  // -----------------------------
   const uploadImagesToCloudinary = async () => {
     const uploadedUrls = [];
 
     for (let i = 0; i < images.length; i++) {
       const form = new FormData();
       form.append("file", images[i]);
-      form.append("upload_preset", process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET);
+      form.append("upload_preset", uploadPreset);
 
       const uploadResult = await axios.post(
-        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         form
       );
 
@@ -54,37 +60,37 @@ export default function AddProperty() {
     return uploadedUrls;
   };
 
+  // -----------------------------
+  //      FORMU GÖNDER
+  // -----------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!backendUrl) {
-      alert("Backend URL bulunamadı! frontend/.env dosyasını kontrol edin.");
+    if (!token) {
+      alert("ADMİN TOKEN BULUNAMADI! Login olup tekrar deneyin.");
       return;
     }
 
     try {
-      // -------------------------------
-      // 1) Cloudinary'ye resimleri yükle
-      // -------------------------------
+      // 1) Resimleri Cloudinary'ye yükle
       const uploadedImageUrls = await uploadImagesToCloudinary();
 
-      // -------------------------------
-      // 2) Backend'e ilan gönder
-      // -------------------------------
+      // 2) Backend'e veri gönder
       const payload = {
         ...formDataObj,
-        images: uploadedImageUrls
+        images: uploadedImageUrls,
       };
 
       await axios.post(`${backendUrl}/api/properties`, payload, {
         headers: {
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
         }
       });
 
       alert("İlan başarıyla eklendi!");
     } catch (error) {
-      console.error(error);
+      console.error("HATA:", error);
       alert("İlan yüklenirken hata oluştu!");
     }
   };
