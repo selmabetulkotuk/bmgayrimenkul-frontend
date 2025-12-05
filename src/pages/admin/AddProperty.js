@@ -35,6 +35,25 @@ export default function AddProperty() {
     setImages(e.target.files);
   };
 
+  const uploadImagesToCloudinary = async () => {
+    const uploadedUrls = [];
+
+    for (let i = 0; i < images.length; i++) {
+      const form = new FormData();
+      form.append("file", images[i]);
+      form.append("upload_preset", process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET);
+
+      const uploadResult = await axios.post(
+        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        form
+      );
+
+      uploadedUrls.push(uploadResult.data.secure_url);
+    }
+
+    return uploadedUrls;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -43,15 +62,23 @@ export default function AddProperty() {
       return;
     }
 
-    const data = new FormData();
-    Object.keys(formDataObj).forEach((key) => data.append(key, formDataObj[key]));
-    for (let i = 0; i < images.length; i++) data.append("images", images[i]);
-
     try {
-      await axios.post(`${backendUrl}/api/properties`, data, {
+      // -------------------------------
+      // 1) Cloudinary'ye resimleri yükle
+      // -------------------------------
+      const uploadedImageUrls = await uploadImagesToCloudinary();
+
+      // -------------------------------
+      // 2) Backend'e ilan gönder
+      // -------------------------------
+      const payload = {
+        ...formDataObj,
+        images: uploadedImageUrls
+      };
+
+      await axios.post(`${backendUrl}/api/properties`, payload, {
         headers: {
-          "Content-Type": "multipart/form-data",
-          "Authorization": `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`
         }
       });
 
